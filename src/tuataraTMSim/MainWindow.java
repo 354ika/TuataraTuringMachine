@@ -83,6 +83,12 @@ public class MainWindow extends JFrame
      */
     protected static final int ULTRAFAST_EXECUTE_SPEED_DELAY = 10;
     
+
+    /**
+     * NOTE: Add functionality for zero delay execution. 
+     */
+    protected static final int ZERO_EXECUTE_SPEED_DELAY = 0;
+
     /**
      * Width of the machine canvas.
      */
@@ -118,12 +124,13 @@ public class MainWindow extends JFrame
      */
     protected static int minDistanceForNewWindowLoc = 50;
 
+
     /**
      * Random step between distances between new windows.
      * Considered for removal.
      */
     protected static int windowLocRandomStepSize = 10;
-    
+
     /**
      * Random number generator used for state and transition placement.
      * Considered for removal.
@@ -224,6 +231,7 @@ public class MainWindow extends JFrame
      */
     public static void main(String[] args)
     {
+
         // Choose the look-and-feel for the program before running everything
         try
         {
@@ -564,6 +572,10 @@ public class MainWindow extends JFrame
         JRadioButtonMenuItem m_ultraFastExecuteSpeed = new JRadioButtonMenuItem(m_ultraFastExecuteSpeedAction);
         machineMenu.add(m_ultraFastExecuteSpeed);
         executeSpeedMenuItems.add(m_ultraFastExecuteSpeed);
+
+        JRadioButtonMenuItem m_zeroDelayExecuteSpeed = new JRadioButtonMenuItem(m_zeroDelayExecuteSpeedAction);
+        machineMenu.add(m_zeroDelayExecuteSpeed);
+        executeSpeedMenuItems.add(m_zeroDelayExecuteSpeed);
         
         m_fastExecuteSpeed.setSelected(true);
         m_executionDelayTime = FAST_EXECUTE_SPEED_DELAY;
@@ -1045,6 +1057,7 @@ public class MainWindow extends JFrame
             m_fastExecuteSpeedAction.setEnabled(isEnabled);
             m_superFastExecuteSpeedAction.setEnabled(isEnabled);
             m_ultraFastExecuteSpeedAction.setEnabled(isEnabled);
+            m_zeroDelayExecuteSpeedAction.setEnabled(isEnabled);
         }
     }
     
@@ -1088,7 +1101,8 @@ public class MainWindow extends JFrame
         m_fastExecuteSpeedAction.setEnabled(isEnabled);
         m_superFastExecuteSpeedAction.setEnabled(isEnabled);
         m_ultraFastExecuteSpeedAction.setEnabled(isEnabled);
-        
+        m_zeroDelayExecuteSpeedAction.setEnabled(isEnabled);
+
         m_headToStartAction.setEnabled(isEnabled);
         m_eraseTapeAction.setEnabled(isEnabled);
         m_reloadTapeAction.setEnabled(isEnabled);
@@ -2341,7 +2355,104 @@ public class MainWindow extends JFrame
                     }
                     setEditingEnabled(false);
                     m_timerTask = new ExecutionTimerTask(panel, m_tapeDisp);
-                    m_timer.schedule(m_timerTask, 0, m_executionDelayTime);
+                    
+                    // Validate execution delay. If zero, do not set task.
+                    if (m_executionDelayTime > 0)
+                    {
+                        m_timer.schedule(m_timerTask, 0, m_executionDelayTime);
+                    }
+                    else /* NOTE: Nonstandard Tuatara: Instant simulator. */
+                    {
+                        /* New code goes here */
+                        MainWindow inst = MainWindow.getInstance();
+                        MachineGraphicsPanel m_panel = m_timerTask.getPanel(); /* I'm running it myself. No timer tasks. */
+
+                        try
+                        {
+                            Simulator sim = m_panel.getSimulator();
+                            // Pre-validate the machine
+                            String result = sim.getMachine().hasUndefinedSymbols();
+                            if (result != null)
+                            {
+                                inst.getConsole().log("Cannot simulate %s: %s",
+                                        m_panel.getFrame().getTitle(), result);
+                                Global.showErrorMessage("Execute", "Cannot simulate: %s", result);
+                                MainWindow.getInstance().setEditingEnabled(true);
+                                return;
+                            }
+                            // If we are just starting, write out the input on the tape
+                            if (sim.getCurrentState() == null)
+                            {
+                                Tape tape = inst.getTape();
+                                // Issue a minor warning to the console if the r/w head is not in the leftmost cell;
+                                // continue execution
+                                if (tape.headLocation() != 0)
+                                {
+                                    inst.getConsole().log("Warning: Tape head has not been reset");
+                                }
+                                inst.getConsole().logPartial(m_panel, "Input: %s\n",
+                                        tape.getPartialString(tape.headLocation(),
+                                                            tape.getLength() - tape.headLocation()));
+                            }
+                            int y = 0;
+
+                            try { y = Global.getInteger(); } catch (Exception z) { throw new Exception("Computation failed: Expected an integer"); }
+
+                            boolean x = sim.runUntilHalt(y);
+
+                            m_panel.repaint();
+                            m_tapeDisp.repaint();
+                            if (sim.isHalted())
+                            {
+                                inst.getConsole().logPartial(m_panel, sim.getConfiguration());
+                                inst.getConsole().endPartial();
+                            }
+                            else
+                            {
+                                inst.getConsole().logPartial(m_panel, "%s %c ", sim.getConfiguration(), Global.CONFIG_TEE);
+                            }
+
+                            if (x) /* Computation success! */
+                            {
+                                System.out.println("Execution completed.");
+                                throw new ComputationCompletedException("The machine halted.");
+                            }
+                            else 
+                            {
+                                String fmt = String.format("The machine did not halt after %d steps.", y);
+                                throw new ComputationFailedException(fmt);
+                            }
+
+                        }
+                        // Machine halted as expected
+                        catch (ComputationCompletedException ex)
+                        {
+                            MainWindow.getInstance().setEditingEnabled(true);
+                            inst.stopExecution();
+
+                            String msg = m_panel.getErrorMessage(ex);
+                            inst.getConsole().log("Simulation of %s finished: %s",
+                                    m_panel.getFrame().getTitle(), msg);
+                            Global.showInfoMessage(MainWindow.HALTED_MESSAGE_TITLE_STR,
+                                    "Simulation finished: %s", msg);
+                            m_panel.getSimulator().resetMachine();
+                            m_panel.repaint();
+                        }
+                        // Machine halted unexpectedly
+                        catch (Exception ex)
+                        {
+                            MainWindow.getInstance().setEditingEnabled(true);
+                            inst.stopExecution();
+
+                            String msg = m_panel.getErrorMessage(ex);
+                            inst.getConsole().log("Simulation of %s halted unexpectedly: %s",
+                                    m_panel.getFrame().getTitle(), msg);
+                            Global.showErrorMessage(MainWindow.HALTED_MESSAGE_TITLE_STR,
+                                    "Simulation halted unexpectedly: %s", msg);
+                        }
+                        inst.repaint();
+                        /* End new code */
+                    }
                 }
             }
         };
@@ -2419,6 +2530,16 @@ public class MainWindow extends JFrame
     public final ExecutionSpeedSelectionAction m_ultraFastExecuteSpeedAction = 
         new ExecutionSpeedSelectionAction("Ultra Fast", ULTRAFAST_EXECUTE_SPEED_DELAY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_5, KeyEvent.CTRL_DOWN_MASK)); 
+
+
+    /**
+     * NOTE: Test for zero-delay execution.
+     */
+    public final ExecutionSpeedSelectionAction m_zeroDelayExecuteSpeedAction = 
+        new ExecutionSpeedSelectionAction("Zero delay", ZERO_EXECUTE_SPEED_DELAY, 
+            KeyStroke.getKeyStroke(KeyEvent.VK_6, KeyEvent.CTRL_DOWN_MASK));
+
+
 
     /**
      * Action for moving the read/write head to the start of the tape.
