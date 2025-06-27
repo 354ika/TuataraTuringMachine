@@ -2361,9 +2361,7 @@ public class MainWindow extends JFrame
                     {
                         m_timer.schedule(m_timerTask, 0, m_executionDelayTime);
                     }
-                    else /* NOTE: Nonstandard Tuatara:
-                        I'm going to write my own instant simulator instead of this
-                        exception driven delay thing. */
+                    else /* NOTE: Nonstandard Tuatara: Instant simulator. */
                     {
                         /* New code goes here */
                         MainWindow inst = MainWindow.getInstance();
