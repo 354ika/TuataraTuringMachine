@@ -132,12 +132,6 @@ public class MainWindow extends JFrame
     protected static int windowLocRandomStepSize = 10;
 
     /**
-     * NOTE: Scanner to scan the stdin stream.
-     */
-
-    protected static Scanner s;
-
-    /**
      * Random number generator used for state and transition placement.
      * Considered for removal.
      */
@@ -237,9 +231,6 @@ public class MainWindow extends JFrame
      */
     public static void main(String[] args)
     {
-        // NOTE: I'm initializing my scanner here for stdin and you can't stop me
-        // Whoever closes the system also closes the stream
-        s = new Scanner(System.in);
 
         // Choose the look-and-feel for the program before running everything
         try
@@ -2405,7 +2396,7 @@ public class MainWindow extends JFrame
                                         tape.getPartialString(tape.headLocation(),
                                                             tape.getLength() - tape.headLocation()));
                             }
-                            Scanner s = new Scanner(System.in); int y = 0;
+                            int y = 0;
 
                             try { y = Global.getInteger(); } catch (Exception z) { throw new Exception("Computation failed: Expected an integer"); }
 
