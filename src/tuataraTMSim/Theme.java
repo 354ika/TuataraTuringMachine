@@ -123,6 +123,8 @@ public final class Theme
         public Color canvasGrid;
         /** Fill of an ordinary state. */
         public Color stateFill;
+        /** Fill of a submachine 'state'. */
+        public Color submachineFill;
         /** Outline of an ordinary state. */
         public Color stateStroke;
         /** State label text. */
@@ -209,6 +211,7 @@ public final class Theme
         LIGHT.canvas         = new Color(0xFAFBFC);
         LIGHT.canvasGrid     = new Color(0xDFE3E9);
         LIGHT.stateFill      = new Color(0xE8EEFC);
+        LIGHT.submachineFill = new Color(0x30E482);
         LIGHT.stateStroke    = new Color(0x3B6FF5);
         LIGHT.stateLabel     = new Color(0x16305C);
         LIGHT.stateSelected  = new Color(0xD3372B);
@@ -251,6 +254,7 @@ public final class Theme
         DARK.danger          = new Color(0xF06A5D);
         DARK.canvas          = new Color(0x131519);
         DARK.canvasGrid      = new Color(0x262B33);
+        DARK.submachineFill  = new Color(0x308040);
         DARK.stateFill       = new Color(0x243352);
         DARK.stateStroke     = new Color(0x5B8DEF);
         DARK.stateLabel      = new Color(0xDCE6FA);

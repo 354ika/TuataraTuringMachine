@@ -85,7 +85,7 @@ public class TM_State extends State<TM_Action, TM_Transition, TM_Machine, TM_Sim
      */
     protected Paint getPaint()
     {
-        return m_subMachine != null? tuataraTMSim.Theme.palette().accentSoft : super.getPaint();
+        return m_subMachine != null ? tuataraTMSim.Theme.palette().submachineFill : super.getPaint();
     }
 
     /**
