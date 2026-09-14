@@ -47,3 +47,6 @@ JavaDoc documentation can also be produced by running:
   welcome screen, and redrew the machine canvas, tape and console
 
 * **354ika** - Adding the speed toggle functionality
+
+* **RoyalPentacle** - Added Grid Snapping functionality for states and transitions.
+  
