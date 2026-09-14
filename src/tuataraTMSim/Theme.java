@@ -190,6 +190,11 @@ public final class Theme
      */
     public static final Palette DARK = new Palette("Dark", true);
 
+    /**
+     * TTM dark, hallucinated by yours truly
+     */
+    public static final Palette TTM = new Palette("TTM", false);
+
     static
     {
         LIGHT.background     = new Color(0xF4F5F7);
@@ -279,6 +284,50 @@ public final class Theme
         DARK.consoleText     = new Color(0xC9D0DB);
         DARK.consoleMuted    = new Color(0x6C7482);
         DARK.shadow          = new Color(0, 0, 0, 90);
+
+        TTM.background     = new Color(0x000000);
+        TTM.surface        = new Color(0x000000);
+        TTM.surfaceAlt     = new Color(0x000000);
+        TTM.surfaceHover   = new Color(0x000000);
+        TTM.surfacePressed = new Color(0x000000);
+        TTM.border         = new Color(0x303030);
+        TTM.borderStrong   = new Color(0x606060);
+        TTM.text           = new Color(0xE0E0E0);
+        TTM.textMuted      = new Color(0x808080);
+        TTM.accent         = new Color(0xD0D0D0);
+        TTM.accentHover    = new Color(0x707070);
+        TTM.onAccent       = new Color(0x000000);
+        TTM.accentSoft     = new Color(0x303030);
+        TTM.success        = new Color(0x00FF00);
+        TTM.warning        = new Color(0xC07000);
+        TTM.danger         = new Color(0xFF8000);
+        TTM.canvas         = new Color(0x000000);
+        TTM.canvasGrid     = new Color(0x101010);
+        TTM.stateFill      = new Color(0xD86060);
+        TTM.submachineFill = new Color(0x60D860);
+        TTM.stateStroke    = new Color(0x101010);
+        TTM.stateLabel     = new Color(0x000000);
+        TTM.stateSelected  = new Color(0xFFFF00);
+        TTM.stateCurrent   = new Color(0x00D0FF);
+        TTM.onStateCurrent = new Color(0x000000);
+        TTM.stateCurrentGlow = new Color(0xFFFF00);
+        TTM.stateStart     = new Color(0x40C040);
+        TTM.transition     = new Color(0x0090FF);
+        TTM.transitionActive = new Color(0xFFC0C0);
+        TTM.transitionSelected = new Color(0xFFFF00);
+        TTM.actionPill     = new Color(0x000000);
+        TTM.actionText     = new Color(0xB0B0B0);
+        TTM.tapeBg         = new Color(0x000000);
+        TTM.tapeCell       = new Color(0x000000);
+        TTM.tapeCellBorder = new Color(0xB0B0B0);
+        TTM.tapeText       = new Color(0xFFFFFF);
+        TTM.tapeHead       = new Color(0xFFFFFF);
+        TTM.onTapeHead     = new Color(0x000000);
+        TTM.tapeRuler      = new Color(0xFFFFFF);
+        TTM.consoleBg      = new Color(0x000000);
+        TTM.consoleText    = new Color(0xC0C0C0);
+        TTM.consoleMuted   = new Color(0x808080);
+        TTM.shadow         = new Color(0, 0, 0, 100);
     }
 
     /**
@@ -299,6 +348,18 @@ public final class Theme
     public static Palette palette()
     {
         return s_current;
+    }
+
+    /**
+     * Get an id for the palette currently active.
+     * @return an id for the palette active.
+     */
+    public static int paletteid()
+    {
+        if (s_current == LIGHT) { return 0; }
+        else if (s_current == DARK) { return 1; }
+        else if (s_current == TTM) { return 2; }
+        return -1; 
     }
 
     /**
@@ -331,6 +392,7 @@ public final class Theme
         }
         s_current = p;
         install();
+
 
         for (Window w : Window.getWindows())
         {

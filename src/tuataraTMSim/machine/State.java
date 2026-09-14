@@ -239,7 +239,7 @@ public abstract class State<
         // accepting state.
         if (isFinalState())
         {
-            g2d.setStroke(new BasicStroke(1.6f));
+            g2d.setStroke(new BasicStroke(1f));
             g2d.draw(new Ellipse2D.Float(m_windowX + 4, m_windowY + 4,
                         STATE_RENDERING_WIDTH - 8, STATE_RENDERING_WIDTH - 8));
         }

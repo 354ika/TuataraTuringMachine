@@ -646,12 +646,20 @@ public class MainWindow extends JFrame
 
         m_lightThemeItem = new JRadioButtonMenuItem(m_lightThemeAction);
         m_darkThemeItem = new JRadioButtonMenuItem(m_darkThemeAction);
+        m_ttmThemeItem = new JRadioButtonMenuItem(m_ttmThemeAction);
+
         appearanceMenu.add(m_lightThemeItem);
         appearanceMenu.add(m_darkThemeItem);
+        appearanceMenu.add(m_ttmThemeItem);
+
         appearanceItems.add(m_lightThemeItem);
         appearanceItems.add(m_darkThemeItem);
-        m_lightThemeItem.setSelected(!Theme.isDark());
-        m_darkThemeItem.setSelected(Theme.isDark());
+        appearanceItems.add(m_ttmThemeItem);
+
+        m_lightThemeItem.setSelected(Theme.paletteid() == 0);
+        m_darkThemeItem.setSelected(Theme.paletteid() == 1);
+        m_ttmThemeItem.setSelected(Theme.paletteid() == 2);
+
         viewMenu.add(appearanceMenu);
 
         viewMenu.addSeparator();
@@ -2062,6 +2070,11 @@ public class MainWindow extends JFrame
     private JRadioButtonMenuItem m_darkThemeItem;
 
     /**
+     * Menu item reflecting whether the ttm palette is in force.
+     */
+    private JRadioButtonMenuItem m_ttmThemeItem;
+
+    /**
      * Menu item reflecting whether the console is shown.
      */
     private JCheckBoxMenuItem m_showConsoleItem;
@@ -2317,6 +2330,8 @@ public class MainWindow extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 Theme.set(Theme.LIGHT);
+
+                // A hack to get the consistency working while I figure out what in the code hates me
             }
         };
 
@@ -2329,6 +2344,18 @@ public class MainWindow extends JFrame
             public void actionPerformed(ActionEvent e)
             {
                 Theme.set(Theme.DARK);
+            }
+        };
+
+    /**
+     * Action for switching to the TTM palette.
+     */
+    public final Action m_ttmThemeAction = 
+        new MenuAction("TTM", Icons.get("TTM Dark", MENU_ICON_SIZE), null, null)
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                Theme.set(Theme.TTM);
             }
         };
 
