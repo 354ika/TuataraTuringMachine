@@ -1,5 +1,7 @@
 package tuataraTMSim;
 
+import javax.swing.*;
+
 /**
  * Holds values and functions for user configurable settings.
  */
@@ -11,7 +13,7 @@ public final class Settings {
     /**
      * Dictates snapping behaviour for states and transition lines.
      */
-    private static boolean m_snapToGrid = true;
+    private static boolean m_snapToGrid = false;
 
     /**
      * Set grid snapping behaviour.
@@ -29,10 +31,12 @@ public final class Settings {
         return m_snapToGrid;
     }
 
+
+
     /**
      * The size of the grid to snap to.
      */
-    private static int m_gridSize = 5;
+    private static int m_gridSize = 10;
 
     /**
      * Set the grid size for snapping if enabled.
@@ -41,7 +45,7 @@ public final class Settings {
      */
     public static void setGridSize(int size)
     {
-        m_gridSize = Math.min(1, size);
+        m_gridSize = Math.max(1, size);
     }
 
     /**

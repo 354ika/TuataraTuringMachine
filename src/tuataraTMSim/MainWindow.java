@@ -790,7 +790,30 @@ public class MainWindow extends JFrame
         configMenu.setMnemonic(KeyEvent.VK_C);
         menuBar.add(configMenu);
 
+        JMenu gridMenu = new JMenu("Grid Snapping");
+        JCheckBoxMenuItem gridSnapCheckBox = new JCheckBoxMenuItem(m_toggleSnapToGridAction);
+        gridSnapCheckBox.setState(Settings.getSnapToGrid());
+        gridMenu.add(gridSnapCheckBox);
+        gridMenu.addSeparator();
+        JRadioButtonMenuItem m_gridSizeFive = new JRadioButtonMenuItem(m_setGridSnapToFive);
+        JRadioButtonMenuItem m_gridSizeTen = new JRadioButtonMenuItem(m_setGridSnapToTen);
+        JRadioButtonMenuItem m_gridSizeFifteen = new JRadioButtonMenuItem(m_setGridSnapToFifteen);
+        JRadioButtonMenuItem m_gridSizeTwenty = new JRadioButtonMenuItem(m_setGridSnapToTwenty);
+
+        m_gridSizeItems = new JRadioButtonMenuItem[]{
+                m_gridSizeFive, m_gridSizeTen, m_gridSizeFifteen, m_gridSizeTwenty
+        };
+
+        gridMenu.add(m_gridSizeFive);
+        gridMenu.add(m_gridSizeTen);
+        m_gridSizeTen.setSelected(true);
+        gridMenu.add(m_gridSizeFifteen);
+        gridMenu.add(m_gridSizeTwenty);
+
+
         configMenu.add(new JMenuItem(m_configureAlphabetAction));
+        configMenu.addSeparator();
+        configMenu.add(gridMenu);
         
         
         // Help menu
@@ -1285,6 +1308,24 @@ public class MainWindow extends JFrame
             m_syncingSpeed = false;
         }
     }
+
+    /**
+     * Sync the radio buttons for setting Grid Size such that only one is visibly selected.
+     * @param index The index of the button.
+     */
+    private void syncGridSizeSelection(int index) {
+
+        for (int i = 0; i < m_gridSizeItems.length; i++) {
+            if (i == index) {
+                m_gridSizeItems[i].setSelected(true);
+            }
+            else
+                m_gridSizeItems[i].setSelected(false);
+        }
+
+
+    }
+
 
     /**
      * Run a machine straight through to a halt, rather than stepping it on a timer. Because this
@@ -1992,6 +2033,11 @@ public class MainWindow extends JFrame
      * The execution speed items in the Machine menu, in the same order as the toolbar selector.
      */
     private JRadioButtonMenuItem[] m_speedItems;
+
+    /**
+     * The grid size items in the Configuration menu.
+     */
+    private JRadioButtonMenuItem[] m_gridSizeItems;
 
     /**
      * Set while the speed controls are being brought into agreement, to stop them from updating
@@ -2979,6 +3025,70 @@ public class MainWindow extends JFrame
         };
 
     /**
+     * Action for toggling grid snapping.
+     */
+    public final Action m_toggleSnapToGridAction = new MenuAction("Snap To Grid", null, null, null)
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            Settings.setSnapToGrid(!Settings.getSnapToGrid());
+            var source = e.getSource();
+            if (source.getClass() == JCheckBoxMenuItem.class) {
+                ((JCheckBoxMenuItem) source).setState(Settings.getSnapToGrid());
+            }
+
+        }
+    };
+
+    /**
+     * Action that sets the grid size to five.
+     */
+    public final Action m_setGridSnapToFive = new MenuAction("Size: 5", null, null, null)
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            Settings.setGridSize(5);
+            syncGridSizeSelection(0);
+        }
+    };
+
+    /**
+     * Action that sets the grid size to ten.
+     */
+    public final Action m_setGridSnapToTen = new MenuAction("Size: 10", null, null, null)
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            Settings.setGridSize(10);
+            syncGridSizeSelection(1);
+        }
+    };
+
+    /**
+     * Action that sets the grid size to fifteen.
+     */
+    public final Action m_setGridSnapToFifteen = new MenuAction("Size: 15", null, null, null)
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            Settings.setGridSize(15);
+            syncGridSizeSelection(2);
+        }
+    };
+
+    /**
+     * Action that sets the grid size to twenty.
+     */
+    public final Action m_setGridSnapToTwenty = new MenuAction("Size: 20", null, null, null)
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            Settings.setGridSize(20);
+            syncGridSizeSelection(3);
+        }
+    };
+
+    /**
      * Action for displaying help documentation.
      */
     public final Action m_helpAction = 
@@ -3012,4 +3122,6 @@ public class MainWindow extends JFrame
                         "Graphics were kindly provided by Justin Bedggood.", Global.VERSION);
             }
         };
+
+
 }
