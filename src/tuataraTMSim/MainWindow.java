@@ -3005,7 +3005,7 @@ public class MainWindow extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             Settings.setSnapToGrid(!Settings.getSnapToGrid());
-            var source = e.getSource();
+            Object source = e.getSource();
             if (source.getClass() == JCheckBoxMenuItem.class) {
                 ((JCheckBoxMenuItem) source).setState(Settings.getSnapToGrid());
             }
