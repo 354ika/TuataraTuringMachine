@@ -29,6 +29,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.io.Serializable;
 import java.util.Collection;
+
+import tuataraTMSim.Settings;
 import tuataraTMSim.Theme;
 
 /**
@@ -65,8 +67,7 @@ public abstract class State<
         m_label = label;
         m_startState = startState;
         m_finalState = finalState;
-        m_windowX = windowX;
-        m_windowY = windowY;
+        setPosition(windowX, windowY);
     }
 
     /**
@@ -148,8 +149,15 @@ public abstract class State<
      */
     public void setPosition(int x, int  y)
     {
-        m_windowX = x;
-        m_windowY = y;
+        if (!Settings.getSnapToGrid()) {
+            m_windowX = x;
+            m_windowY = y;
+        }
+        else
+        {
+            m_windowX = Settings.snapValueToGrid(x);
+            m_windowY = Settings.snapValueToGrid(y);
+        }
     }
 
     /**

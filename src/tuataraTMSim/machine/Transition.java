@@ -29,6 +29,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.Collection;
 import java.io.Serializable;
+
+import tuataraTMSim.Settings;
 import tuataraTMSim.Spline;
 import tuataraTMSim.Theme;
 
@@ -82,13 +84,11 @@ public abstract class Transition<
         m_action = action;
         if (from != to)
         {
-            m_controlPtX = (from.getX() + to.getX()) / 2;
-            m_controlPtY = (from.getY() + to.getY()) / 2;
+            setControlPoint((from.getX() + to.getX()) / 2,(from.getY() + to.getY()) / 2);
         }
         else
         {
-            m_controlPtX = from.getX() + STATE.STATE_RENDERING_WIDTH / 2;
-            m_controlPtY = from.getY() + (int)(STATE.STATE_RENDERING_WIDTH * 1.5);
+            setControlPoint(from.getX() + STATE.STATE_RENDERING_WIDTH / 2, from.getY() + (int)(STATE.STATE_RENDERING_WIDTH * 1.5));
         }
     }
 
@@ -97,8 +97,7 @@ public abstract class Transition<
         m_fromState = from;
         m_toState = to;
         m_action = action;
-        m_controlPtX = controlX;
-        m_controlPtY = controlY;
+        setControlPoint(controlX, controlY);
     }
 
     /**
@@ -155,8 +154,15 @@ public abstract class Transition<
      */
     public void setControlPoint(int x, int y)
     {
-        m_controlPtX = x;
-        m_controlPtY = y;
+        if (!Settings.getSnapToGrid()) {
+            m_controlPtX = x;
+            m_controlPtY = y;
+        }
+        else
+        {
+            m_controlPtX = Settings.snapValueToGrid(x);
+            m_controlPtY = Settings.snapValueToGrid(y);
+        }
     }
 
     /**
